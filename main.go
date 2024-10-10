@@ -41,7 +41,7 @@ resource "azurerm_service_plan" "my_app_service" {
   os_type = "Windows"
 
   sku_name = "P1v2"
-  worker_count = 4 # <<<<<<<<<< Try changing this to 8 to compare the costs
+  worker_count = 8
 
   tags = {
     Environment = "Prod"
@@ -62,3 +62,35 @@ resource "azurerm_linux_function_app" "my_function" {
     Environment = "Prod"
   }
 }
+
+resource "azurerm_linux_virtual_machine" "my_linux_vm2" {
+  location = "eastus"
+  name = "test2"
+  resource_group_name = "test2"
+  admin_username = "testuser"
+  admin_password = "Testpa5s"
+
+  size = "Standard_F16s" # <<<<<<<<<< Try changing this to Standard_F16s_v2 to compare the costs
+
+  tags = {
+    Environment = "production"
+    Service = "web-app"
+  }
+
+  os_disk {
+    caching = "ReadWrite"
+    storage_account_type = "Standard_LRS"
+  }
+
+  network_interface_ids = [
+    "/subscriptions/123/resourceGroups/testrg/providers/Microsoft.Network/networkInterfaces/testnic",
+  ]
+
+  source_image_reference {
+    publisher = "Canonical"
+    offer = "UbuntuServer"
+    sku = "16.04-LTS"
+    version = "latest"
+  }
+}
+
